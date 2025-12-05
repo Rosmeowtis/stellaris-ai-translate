@@ -79,7 +79,7 @@ def translate(files: list[str]):
                 {"role": "user", "content": content},
             ]
         )
-        logger.info(f"开始翻译文件: {path.as_posix()}[{len(content) / 1024}KiB]")
+        logger.info(f"开始翻译文件: {path.as_posix()}[{len(content) / 1024:.2f}KiB]")
         response = CLIENT.chat.completions.create(
             model="deepseek-reasoner",
             messages=messages,
