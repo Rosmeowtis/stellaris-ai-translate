@@ -138,9 +138,9 @@ def check(files: list[str]):
                             f"翻译破坏了特殊格式: {key}/{match} -> {yaml_new['l_simp_chinese'][key]}"
                         )
         if problems:
-            logger.error(f"文件 {new_path.as_posix()} 存在以下问题:")
-            for i, problem in enumerate(problems):
-                logger.error(f"  {i + 1}. {problem}")
+            logger.error(
+                f"文件 {new_path.as_posix()} 存在以下问题: {'\n'.join((f'|  {i + 1}. {problem}') for i, problem in enumerate(problems))}"
+            )
         else:
             logger.success(f"文件 {new_path.as_posix()} 检查通过")
 
