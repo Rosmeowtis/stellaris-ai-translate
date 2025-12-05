@@ -92,14 +92,14 @@ def translate(files: list[str]):
             f"翻译完成: {path.as_posix()}, 翻译结果预览: {msg.content[:80]!r} ... {msg.content[-80:]!r}"
         )
         history.append(msg)
-        new_path = path.with_suffix(".l_simp_chinese.yaml")
+        new_path = path.with_stem(f"{path.stem}_zh")
         new_path.write_text(msg.content, encoding="utf-8")
 
 
 def check(files: list[str]):
     for file in files:
         path = Path(file)
-        new_path = path.with_suffix(".l_simp_chinese.yaml")
+        new_path = path.with_stem(f"{path.stem}_zh")
         if not new_path.exists():
             logger.warning(f"{new_path.as_posix()} 不存在，跳过")
             continue
