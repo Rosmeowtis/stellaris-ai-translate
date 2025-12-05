@@ -69,7 +69,7 @@ def translate(files: list[str]):
         if not path.exists():
             logger.warning(f"{path.as_posix()} 不存在，跳过")
             continue
-        content = path.read_text(encoding="utf-8")
+        content = path.read_text(encoding="utf-8-sig")
         messages = (
             [
                 {"role": "system", "content": SYS_PROMPT},
@@ -93,7 +93,7 @@ def translate(files: list[str]):
         )
         history.append(msg)
         new_path = path.with_stem(f"{path.stem}_zh")
-        new_path.write_text(msg.content, encoding="utf-8")
+        new_path.write_text(msg.content, encoding="utf-8-sig")
 
 
 def check(files: list[str]):
@@ -105,9 +105,9 @@ def check(files: list[str]):
             continue
         logger.info(f"开始检查文件: {new_path.as_posix()}")
         problems = []
-        with path.open(encoding="utf-8") as f:
+        with path.open(encoding="utf-8-sig") as f:
             yaml_raw = yaml.safe_load(f)
-        with new_path.open(encoding="utf-8") as f:
+        with new_path.open(encoding="utf-8-sig") as f:
             try:
                 yaml_new = yaml.safe_load(f)
             except yaml.error.YAMLError as e:
