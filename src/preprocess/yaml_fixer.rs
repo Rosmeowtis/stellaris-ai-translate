@@ -2,8 +2,8 @@
 //!
 //! 修复Stellaris本地化文件的YAML格式问题。
 
-use regex::Regex;
 use crate::error::{Result, TranslationError};
+use regex::Regex;
 
 /// 修复YAML内容
 pub fn fix_yaml_content(content: &str) -> Result<String> {
@@ -15,10 +15,13 @@ pub fn fix_yaml_content(content: &str) -> Result<String> {
 
     // 2. 确保所有值都有引号
     let re_unquoted_value = Regex::new(r#"(\w+):\s+([^"\s][^"\n]*)(?:\n|$)"#).unwrap();
-    fixed = re_unquoted_value.replace_all(&fixed, r#"$1: "$2""#).to_string();
+    fixed = re_unquoted_value
+        .replace_all(&fixed, r#"$1: "$2""#)
+        .to_string();
 
     // 3. 标准化缩进（2空格）
-    let lines: Vec<String> = fixed.lines()
+    let lines: Vec<String> = fixed
+        .lines()
         .map(|line| {
             let trimmed = line.trim_start();
             let indent_level = line.len() - trimmed.len();

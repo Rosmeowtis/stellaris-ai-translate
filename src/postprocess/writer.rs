@@ -2,16 +2,12 @@
 //!
 //! 将翻译后的内容写入目标目录。
 
+use crate::error::{Result, TranslationError};
 use std::fs;
 use std::path::{Path, PathBuf};
-use crate::error::{Result, TranslationError};
 
 /// 写入翻译后的文件
-pub fn write_translated_file(
-    content: &str,
-    output_path: &Path,
-    create_dirs: bool,
-) -> Result<()> {
+pub fn write_translated_file(content: &str, output_path: &Path, create_dirs: bool) -> Result<()> {
     if create_dirs {
         if let Some(parent) = output_path.parent() {
             fs::create_dir_all(parent)?;
@@ -52,6 +48,12 @@ pub fn generate_target_filename(
 ) -> String {
     source_filename
         .replace(&format!("l_{}", source_lang), &format!("l_{}", target_lang))
-        .replace(&format!("_{}.yml", source_lang), &format!("_{}.yml", target_lang))
-        .replace(&format!("_{}.yaml", source_lang), &format!("_{}.yaml", target_lang))
+        .replace(
+            &format!("_{}.yml", source_lang),
+            &format!("_{}.yml", target_lang),
+        )
+        .replace(
+            &format!("_{}.yaml", source_lang),
+            &format!("_{}.yaml", target_lang),
+        )
 }

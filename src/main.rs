@@ -3,10 +3,10 @@
 //! 命令行接口和主工作流程。
 
 use clap::{Parser, Subcommand};
-use pretty_env_logger;
-use std::path::PathBuf;
 use paradox_mod_translator::config::{TranslationTask, load_openai_api_key};
 use paradox_mod_translator::error::{Result, TranslationError};
+use pretty_env_logger;
+use std::path::PathBuf;
 
 /// 命令行参数
 #[derive(Parser)]
@@ -58,7 +58,12 @@ async fn main() -> Result<()> {
     let cli = Cli::parse();
 
     match cli.command {
-        Commands::Translate { task_file, verbose, skip_preprocess, skip_validation } => {
+        Commands::Translate {
+            task_file,
+            verbose,
+            skip_preprocess,
+            skip_validation,
+        } => {
             if verbose {
                 log::info!("Starting translation task from: {:?}", task_file);
             }
@@ -68,7 +73,7 @@ async fn main() -> Result<()> {
                 log::error!("OPENAI_API_KEY environment variable is not set");
                 log::info!("Please set OPENAI_API_KEY environment variable or create a .env file");
                 return Err(TranslationError::MissingEnvVar(
-                    "OPENAI_API_KEY environment variable is required".to_string()
+                    "OPENAI_API_KEY environment variable is required".to_string(),
                 ));
             }
 
@@ -113,7 +118,7 @@ async fn main() -> Result<()> {
                 match load_openai_api_key() {
                     Ok(key) => {
                         let masked_key = if key.len() > 8 {
-                            format!("{}...{}", &key[0..4], &key[key.len()-4..])
+                            format!("{}...{}", &key[0..4], &key[key.len() - 4..])
                         } else {
                             "***".to_string()
                         };
@@ -128,7 +133,7 @@ async fn main() -> Result<()> {
                 log::error!("API key is not configured");
                 log::info!("Please set OPENAI_API_KEY environment variable");
                 return Err(TranslationError::MissingEnvVar(
-                    "OPENAI_API_KEY environment variable is required".to_string()
+                    "OPENAI_API_KEY environment variable is required".to_string(),
                 ));
             }
 

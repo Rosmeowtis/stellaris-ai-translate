@@ -18,7 +18,7 @@ pub struct TranslationSlice {
 pub fn merge_slices(slices: Vec<TranslationSlice>) -> Result<String> {
     if slices.is_empty() {
         return Err(TranslationError::Postprocess(
-            crate::error::PostprocessError::InconsistentSlices
+            crate::error::PostprocessError::InconsistentSlices,
         ));
     }
 
@@ -28,12 +28,13 @@ pub fn merge_slices(slices: Vec<TranslationSlice>) -> Result<String> {
 
     // 检查连续性
     for i in 1..sorted_slices.len() {
-        if sorted_slices[i].start_line != sorted_slices[i-1].end_line + 1 {
+        if sorted_slices[i].start_line != sorted_slices[i - 1].end_line + 1 {
             return Err(TranslationError::Postprocess(
-                crate::error::PostprocessError::MergeFailed(
-                    format!("Slices are not contiguous: {} != {} + 1",
-                        sorted_slices[i].start_line, sorted_slices[i-1].end_line)
-                )
+                crate::error::PostprocessError::MergeFailed(format!(
+                    "Slices are not contiguous: {} != {} + 1",
+                    sorted_slices[i].start_line,
+                    sorted_slices[i - 1].end_line
+                )),
             ));
         }
     }
@@ -48,7 +49,10 @@ pub fn merge_slices(slices: Vec<TranslationSlice>) -> Result<String> {
 }
 
 /// 从YAML内容重建完整文件
-pub fn reconstruct_yaml_file(slices: Vec<TranslationSlice>, original_header: &str) -> Result<String> {
+pub fn reconstruct_yaml_file(
+    slices: Vec<TranslationSlice>,
+    original_header: &str,
+) -> Result<String> {
     let merged = merge_slices(slices)?;
 
     // 确保有文件头

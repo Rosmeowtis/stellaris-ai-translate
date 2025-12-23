@@ -16,10 +16,11 @@ pub fn load_openai_api_key() -> Result<String, crate::error::TranslationError> {
     // 首先尝试加载.env文件（如果存在）
     let _ = dotenvy::dotenv();
 
-    env::var("OPENAI_API_KEY")
-        .map_err(|_| crate::error::TranslationError::MissingEnvVar(
-            "OPENAI_API_KEY environment variable is required".to_string()
-        ))
+    env::var("OPENAI_API_KEY").map_err(|_| {
+        crate::error::TranslationError::MissingEnvVar(
+            "OPENAI_API_KEY environment variable is required".to_string(),
+        )
+    })
 }
 
 /// 检查API密钥是否已设置（不实际加载值）

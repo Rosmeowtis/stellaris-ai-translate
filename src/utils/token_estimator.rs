@@ -14,9 +14,7 @@ pub fn estimate_english_tokens(text: &str) -> usize {
 pub fn estimate_chinese_tokens(text: &str) -> usize {
     // 中文每个字符大约1-2个token
     // 使用保守估计：每个汉字1.5个token
-    let chinese_char_count = text.chars()
-        .filter(|c| is_cjk_character(*c))
-        .count();
+    let chinese_char_count = text.chars().filter(|c| is_cjk_character(*c)).count();
     let other_char_count = text.chars().count() - chinese_char_count;
 
     // 中文字符：1.5 token/字符，其他字符：0.25 token/字符（英文比例）

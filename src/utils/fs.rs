@@ -1,9 +1,9 @@
 //! 文件系统工具模块
 
+use crate::error::Result;
 use std::fs;
 use std::path::{Path, PathBuf};
 use walkdir::WalkDir;
-use crate::error::Result;
 
 /// 递归查找所有YAML文件
 pub fn find_yaml_files(dir: &Path) -> Result<Vec<PathBuf>> {

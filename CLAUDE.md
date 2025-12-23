@@ -13,3 +13,7 @@
 
 + 项目文件结构： @./docs/project_structure.md
 + 工作流程： @./docs/workflow.md
+
+## 例行指令
+
++ 每次完成对项目的修改，运行 `cargo fmt` 指令以格式化整个项目。

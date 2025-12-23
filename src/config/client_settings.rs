@@ -76,7 +76,7 @@ fn default_max_tokens() -> u32 {
 }
 
 fn default_max_chunk_size() -> usize {
-    4000  // 大约1000个token的保守估计
+    4000 // 大约1000个token的保守估计
 }
 
 impl ClientSettings {
@@ -84,19 +84,19 @@ impl ClientSettings {
     pub fn validate(&self) -> Result<(), crate::error::ConfigError> {
         if self.temperature < 0.0 || self.temperature > 2.0 {
             return Err(crate::error::ConfigError::MissingField(
-                "temperature must be between 0.0 and 2.0".to_string()
+                "temperature must be between 0.0 and 2.0".to_string(),
             ));
         }
 
         if self.timeout_secs == 0 {
             return Err(crate::error::ConfigError::MissingField(
-                "timeout_secs must be greater than 0".to_string()
+                "timeout_secs must be greater than 0".to_string(),
             ));
         }
 
         if self.max_chunk_size < 100 {
             return Err(crate::error::ConfigError::MissingField(
-                "max_chunk_size must be at least 100 characters".to_string()
+                "max_chunk_size must be at least 100 characters".to_string(),
             ));
         }
 

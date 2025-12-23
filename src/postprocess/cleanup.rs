@@ -2,8 +2,8 @@
 //!
 //! 清理临时文件和中间文件。
 
-use std::path::{Path, PathBuf};
 use crate::error::Result;
+use std::path::{Path, PathBuf};
 
 /// 清理临时文件
 pub fn cleanup_temp_files(temp_dir: &Path) -> Result<()> {

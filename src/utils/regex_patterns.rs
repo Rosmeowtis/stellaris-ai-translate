@@ -33,12 +33,16 @@ lazy_static! {
 
 /// 修复YAML中的键零格式
 pub fn fix_key_zero_format(text: &str) -> String {
-    KEY_ZERO_PATTERN.replace_all(text, r#"$1: "$2""#).to_string()
+    KEY_ZERO_PATTERN
+        .replace_all(text, r#"$1: "$2""#)
+        .to_string()
 }
 
 /// 为未加引号的值添加引号
 pub fn quote_unquoted_values(text: &str) -> String {
-    UNQUOTED_VALUE_PATTERN.replace_all(text, r#"$1: "$2""#).to_string()
+    UNQUOTED_VALUE_PATTERN
+        .replace_all(text, r#"$1: "$2""#)
+        .to_string()
 }
 
 /// 提取所有特殊标记
@@ -46,15 +50,21 @@ pub fn extract_all_markers(text: &str) -> Vec<String> {
     let mut markers = Vec::new();
 
     markers.extend(ICON_PATTERN.find_iter(text).map(|m| m.as_str().to_string()));
-    markers.extend(VARIABLE_PATTERN.find_iter(text).map(|m| m.as_str().to_string()));
-    markers.extend(COLOR_PATTERN.find_iter(text).map(|m| m.as_str().to_string()));
+    markers.extend(
+        VARIABLE_PATTERN
+            .find_iter(text)
+            .map(|m| m.as_str().to_string()),
+    );
+    markers.extend(
+        COLOR_PATTERN
+            .find_iter(text)
+            .map(|m| m.as_str().to_string()),
+    );
 
     markers
 }
 
 /// 检查文本是否包含特殊标记
 pub fn contains_markers(text: &str) -> bool {
-    ICON_PATTERN.is_match(text) ||
-    VARIABLE_PATTERN.is_match(text) ||
-    COLOR_PATTERN.is_match(text)
+    ICON_PATTERN.is_match(text) || VARIABLE_PATTERN.is_match(text) || COLOR_PATTERN.is_match(text)
 }

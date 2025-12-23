@@ -2,10 +2,10 @@
 //!
 //! OpenAI兼容API的HTTP客户端封装。
 
-use reqwest::Client;
+use super::models::*;
 use crate::config::ClientSettings;
 use crate::error::{Result, TranslationError};
-use super::models::*;
+use reqwest::Client;
 
 /// API客户端
 pub struct ApiClient {
@@ -20,9 +20,9 @@ impl ApiClient {
         let client = Client::builder()
             .timeout(std::time::Duration::from_secs(settings.timeout_secs))
             .build()
-            .map_err(|e| TranslationError::Translate(
-                crate::error::TranslateError::ApiRequest(e)
-            ))?;
+            .map_err(|e| {
+                TranslationError::Translate(crate::error::TranslateError::ApiRequest(e))
+            })?;
 
         Ok(Self {
             client,
@@ -32,7 +32,10 @@ impl ApiClient {
     }
 
     /// 发送聊天补全请求
-    pub async fn chat_completions(&self, messages: Vec<ChatMessage>) -> Result<ChatCompletionResponse> {
+    pub async fn chat_completions(
+        &self,
+        messages: Vec<ChatMessage>,
+    ) -> Result<ChatCompletionResponse> {
         let request = ChatCompletionRequest {
             model: self.settings.model.clone(),
             messages,
@@ -41,30 +44,32 @@ impl ApiClient {
             stream: Some(self.settings.stream),
         };
 
-        let response = self.client
+        let response = self
+            .client
             .post(&self.settings.chat_completions_url())
             .header("Authorization", format!("Bearer {}", self.api_key))
             .header("Content-Type", "application/json")
             .json(&request)
             .send()
             .await
-            .map_err(|e| TranslationError::Translate(
-                crate::error::TranslateError::ApiRequest(e)
-            ))?;
+            .map_err(|e| {
+                TranslationError::Translate(crate::error::TranslateError::ApiRequest(e))
+            })?;
 
         if !response.status().is_success() {
             let status = response.status();
             let error_text = response.text().await.unwrap_or_default();
-            return Err(TranslationError::ApiError(
-                format!("API request failed with status {}: {}", status, error_text)
-            ));
+            return Err(TranslationError::ApiError(format!(
+                "API request failed with status {}: {}",
+                status, error_text
+            )));
         }
 
-        let completion: ChatCompletionResponse = response.json()
-            .await
-            .map_err(|e| TranslationError::Translate(
-                crate::error::TranslateError::InvalidResponse(e.to_string())
-            ))?;
+        let completion: ChatCompletionResponse = response.json().await.map_err(|e| {
+            TranslationError::Translate(crate::error::TranslateError::InvalidResponse(
+                e.to_string(),
+            ))
+        })?;
 
         Ok(completion)
     }
