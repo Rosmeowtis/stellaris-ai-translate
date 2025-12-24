@@ -1,51 +1,978 @@
 {
-  "energy": {"1": "energy", "2": "能量"},
-  "minerals": {"1": "minerals", "2": "矿物"},
-  "food": {"1": "food", "2": "食物"},
-  "alloys": {"1": "alloys", "2": "合金"},
-  "consumer goods": {"1": "consumer goods", "2": "消费品"},
-  "unity": {"1": "unity", "2": "凝聚力"},
-  "influence": {"1": "influence", "2": "影响力"},
-  "research": {"1": "research", "2": "研究"},
-  "physics": {"1": "physics", "2": "物理学"},
-  "society": {"1": "society", "2": "社会学"},
-  "engineering": {"1": "engineering", "2": "工程学"},
-  "ship": {"1": "ship", "2": "舰船"},
-  "fleet": {"1": "fleet", "2": "舰队"},
-  "planet": {"1": "planet", "2": "星球"},
-  "system": {"1": "system", "2": "星系"},
-  "sector": {"1": "sector", "2": "星域"},
-  "empire": {"1": "empire", "2": "帝国"},
-  "species": {"1": "species", "2": "物种"},
-  "trait": {"1": "trait", "2": "特质"},
-  "ethic": {"1": "ethic", "2": "思潮"},
-  "civic": {"1": "civic", "2": "国民理念"},
-  "tradition": {"1": "tradition", "2": "传统"},
-  "ascension perk": {"1": "ascension perk", "2": "飞升天赋"},
-  "technology": {"1": "technology", "2": "科技"},
-  "anomaly": {"1": "anomaly", "2": "异常现象"},
-  "event": {"1": "event", "2": "事件"},
-  "modifier": {"1": "modifier", "2": "修正"},
-  "district": {"1": "district", "2": "区划"},
-  "building": {"1": "building", "2": "建筑"},
-  "pop": {"1": "pop", "2": "人口"},
-  "job": {"1": "job", "2": "岗位"},
-  "resource": {"1": "resource", "2": "资源"},
-  "trade": {"1": "trade", "2": "贸易"},
-  "diplomacy": {"1": "diplomacy", "2": "外交"},
-  "war": {"1": "war", "2": "战争"},
-  "peace": {"1": "peace", "2": "和平"},
-  "treaty": {"1": "treaty", "2": "条约"},
-  "federation": {"1": "federation", "2": "联邦"},
-  "crisis": {"1": "crisis", "2": "天灾"},
-  "fallen empire": {"1": "fallen empire", "2": "失落帝国"},
-  "marauder": {"1": "marauder", "2": "掠夺者"},
-  "leviathan": {"1": "leviathan", "2": "利维坦"},
-  "megastructure": {"1": "megastructure", "2": "巨构"},
-  "wormhole": {"1": "wormhole", "2": "虫洞"},
-  "gateway": {"1": "gateway", "2": "星门"},
-  "hyperlane": {"1": "hyperlane", "2": "超空间航道"},
-  "nebula": {"1": "nebula", "2": "星云"},
-  "black hole": {"1": "black hole", "2": "黑洞"},
-  "pulsar": {"1": "pulsar", "2": "脉冲星"}
+  "active volcano": {
+    "1": "active volcano",
+    "2": "活火山"
+  },
+  "admiral": {
+    "1": "admiral",
+    "2": "舰队司令"
+  },
+  "afterburners": {
+    "1": "afterburners",
+    "2": "加力燃烧室"
+  },
+  "ambassador": {
+    "1": "ambassador",
+    "2": "大使；外交使节"
+  },
+  "amenities": {
+    "1": "amenities",
+    "2": "舒适度"
+  },
+  "analyst": {
+    "1": "analyst",
+    "2": "分析专员；分析工蜂；分析单元"
+  },
+  "ancient automation": {
+    "1": "ancient automation",
+    "2": "古代自动化技术"
+  },
+  "ancient caretaker": {
+    "1": "ancient caretaker",
+    "2": "上古看护者"
+  },
+  "ancient factory": {
+    "1": "ancient factory",
+    "2": "古代工厂"
+  },
+  "ancient forgeworld": {
+    "1": "ancient forgeworld",
+    "2": "古代铸造星球"
+  },
+  "ancient orbital weapon": {
+    "1": "ancient orbital weapon",
+    "2": "古代轨道武器"
+  },
+  "approach": {
+    "1": "approach",
+    "2": "对策"
+  },
+  "arc emitter": {
+    "1": "arc emitter",
+    "2": "电弧发射器"
+  },
+  "archeology site": {
+    "1": "archeology site",
+    "2": "考古遗址"
+  },
+  "arcology": {
+    "1": "arcology",
+    "2": "理想城"
+  },
+  "artisan": {
+    "1": "artisan",
+    "2": "工匠"
+  },
+  "asset": {
+    "1": "asset",
+    "2": "内应"
+  },
+  "asteroid belt": {
+    "1": "asteroid belt",
+    "2": "小行星带"
+  },
+  "asteroid impacts": {
+    "1": "asteroid impacts",
+    "2": "小行星撞击"
+  },
+  "astral rift": {
+    "1": "astral rift",
+    "2": "星界裂隙"
+  },
+  "astral thread": {
+    "1": "astral thread",
+    "2": "星界丝缕"
+  },
+  "atmospheric aphrodisiac": {
+    "1": "atmospheric aphrodisiac",
+    "2": "催情大气"
+  },
+  "atmospheric hallucinogen": {
+    "1": "atmospheric hallucinogen",
+    "2": "致幻大气"
+  },
+  "authoritarian": {
+    "1": "authoritarian",
+    "2": "威权主义"
+  },
+  "battleship": {
+    "1": "battleship",
+    "2": "战列舰"
+  },
+  "become the crisis": {
+    "1": "become the crisis",
+    "2": "化身天灾"
+  },
+  "behemoth": {
+    "1": "behemoth",
+    "2": "噬天巨兽"
+  },
+  "betharian": {
+    "1": "betharian",
+    "2": "贝塞里安石"
+  },
+  "bleak": {
+    "1": "bleak",
+    "2": "苍茫大地"
+  },
+  "blocker": {
+    "1": "blocker",
+    "2": "障碍"
+  },
+  "blorg": {
+    "1": "blorg",
+    "2": "布洛葛"
+  },
+  "bow": {
+    "1": "bow",
+    "2": "舰艏"
+  },
+  "branch office": {
+    "1": "branch office",
+    "2": "分部，分公司"
+  },
+  "calculator": {
+    "1": "calculator",
+    "2": "演算者"
+  },
+  "carbon world": {
+    "1": "carbon world",
+    "2": "碳化世界"
+  },
+  "celestial throne": {
+    "1": "celestial throne",
+    "2": "天国王座"
+  },
+  "ceramo-metal": {
+    "1": "ceramo-metal",
+    "2": "瓷金"
+  },
+  "cetana": {
+    "1": "cetana",
+    "2": "塞塔娜"
+  },
+  "chthonian planet": {
+    "1": "chthonian planet",
+    "2": "气陨星核"
+  },
+  "citadel": {
+    "1": "citadel",
+    "2": "擎天堡"
+  },
+  "civic": {
+    "1": "civic",
+    "2": "国民理念"
+  },
+  "cognitive node": {
+    "1": "cognitive node",
+    "2": "意识节点"
+  },
+  "colony ship": {
+    "1": "colony ship",
+    "2": "殖民船"
+  },
+  "colossus": {
+    "1": "colossus",
+    "2": "巨像"
+  },
+  "commander": {
+    "1": "commander",
+    "2": "指挥官"
+  },
+  "commissioner": {
+    "1": "commissioner",
+    "2": "督管专员"
+  },
+  "complex drone": {
+    "1": "complex drone",
+    "2": "复合子个体"
+  },
+  "computing": {
+    "1": "computing",
+    "2": "计算技术"
+  },
+  "construction drone": {
+    "1": "construction drone",
+    "2": "建筑子个体"
+  },
+  "consumer goods": {
+    "1": "consumer goods",
+    "2": "消费品"
+  },
+  "contingency": {
+    "1": "contingency",
+    "2": "肃正协议"
+  },
+  "corvette": {
+    "1": "corvette",
+    "2": "护卫舰"
+  },
+  "crime": {
+    "1": "crime",
+    "2": "犯罪度"
+  },
+  "crisis": {
+    "1": "crisis",
+    "2": "天灾"
+  },
+  "damaged ecology": {
+    "1": "damaged ecology",
+    "2": "生态受损"
+  },
+  "dangerous wildlife": {
+    "1": "dangerous wildlife",
+    "2": "危险野生动物"
+  },
+  "decision": {
+    "1": "decision",
+    "2": "决议"
+  },
+  "defense platform": {
+    "1": "defense platform",
+    "2": "防御平台"
+  },
+  "defense station": {
+    "1": "defense station",
+    "2": "防御站"
+  },
+  "delegate": {
+    "1": "delegate",
+    "2": "帝国代表"
+  },
+  "dense jungle": {
+    "1": "dense jungle",
+    "2": "茂密丛林"
+  },
+  "designation": {
+    "1": "designation",
+    "2": "自动规划"
+  },
+  "district": {
+    "1": "district",
+    "2": "区划"
+  },
+  "divine": {
+    "1": "divine",
+    "2": "升格派"
+  },
+  "drone": {
+    "1": "drone",
+    "2": "子个体/无人机"
+  },
+  "durasteel": {
+    "1": "durasteel",
+    "2": "耐钢"
+  },
+  "ecumenical council": {
+    "1": "ecumenical council",
+    "2": "大公会议"
+  },
+  "ecumenopolis": {
+    "1": "ecumenopolis",
+    "2": "普世城"
+  },
+  "edict": {
+    "1": "edict",
+    "2": "法令"
+  },
+  "efficiency loop": {
+    "1": "efficiency loop",
+    "2": "效率回路"
+  },
+  "egalitarian": {
+    "1": "egalitarian",
+    "2": "平等主义"
+  },
+  "empire sprawl": {
+    "1": "empire sprawl",
+    "2": "帝国规模"
+  },
+  "enclave": {
+    "1": "enclave",
+    "2": "城邦"
+  },
+  "energy credits": {
+    "1": "energy credits",
+    "2": "能量币"
+  },
+  "enigmatic engineering": {
+    "1": "enigmatic engineering",
+    "2": "天机工程"
+  },
+  "ethic": {
+    "1": "ethic",
+    "2": "思潮"
+  },
+  "exceptional quality minerals": {
+    "1": "exceptional quality minerals",
+    "2": "超品矿物"
+  },
+  "exotic gas": {
+    "1": "exotic gas",
+    "2": "异星天然气"
+  },
+  "explorer": {
+    "1": "explorer",
+    "2": "探索者"
+  },
+  "extensive moon system": {
+    "1": "extensive moon system",
+    "2": "卫星繁多"
+  },
+  "fallen empire": {
+    "1": "fallen empire",
+    "2": "失落帝国"
+  },
+  "fanatic authoritarian": {
+    "1": "fanatic authoritarian",
+    "2": "极端威权主义"
+  },
+  "fanatic egalitarian": {
+    "1": "fanatic egalitarian",
+    "2": "极端平等主义"
+  },
+  "fanatic materialist": {
+    "1": "fanatic materialist",
+    "2": "极端唯物主义"
+  },
+  "fanatic militarist": {
+    "1": "fanatic militarist",
+    "2": "极端军国主义"
+  },
+  "fanatic pacifist": {
+    "1": "fanatic pacifist",
+    "2": "极端和平主义"
+  },
+  "fanatic spiritualist": {
+    "1": "fanatic spiritualist",
+    "2": "极端唯心主义"
+  },
+  "fanatic xenophile": {
+    "1": "fanatic xenophile",
+    "2": "极端亲外主义"
+  },
+  "fanatic xenophobe": {
+    "1": "fanatic xenophobe",
+    "2": "极端排外主义"
+  },
+  "federation cohesion": {
+    "1": "federation cohesion",
+    "2": "联邦团结度"
+  },
+  "field manipulation": {
+    "1": "field manipulation",
+    "2": "力场操控"
+  },
+  "flooded habitat": {
+    "1": "flooded habitat",
+    "2": "洪潮居住站"
+  },
+  "fortress": {
+    "1": "fortress",
+    "2": "堡垒"
+  },
+  "frontier outpost": {
+    "1": "frontier outpost",
+    "2": "边境哨站"
+  },
+  "galactic": {
+    "1": "galactic",
+    "2": "星海"
+  },
+  "galactic community": {
+    "1": "galactic community",
+    "2": "星海共同体"
+  },
+  "galactic council": {
+    "1": "galactic council",
+    "2": "星系理事会"
+  },
+  "galactic custodian": {
+    "1": "galactic custodian",
+    "2": "星海监管人"
+  },
+  "galactic defense force": {
+    "1": "galactic defense force",
+    "2": "泛星系防卫军"
+  },
+  "galactic emperor": {
+    "1": "galactic emperor",
+    "2": "星海帝皇"
+  },
+  "galactic senate": {
+    "1": "galactic senate",
+    "2": "星海参议院"
+  },
+  "gas giant": {
+    "1": "gas giant",
+    "2": "气态巨行星"
+  },
+  "general": {
+    "1": "general",
+    "2": "陆军将领；陆军司令"
+  },
+  "gestalt consciousness": {
+    "1": "gestalt consciousness",
+    "2": "格式塔意识"
+  },
+  "governing ethics": {
+    "1": "governing ethics",
+    "2": "主流思潮"
+  },
+  "grand archives": {
+    "1": "grand archives",
+    "2": "博物天枢；大档案库"
+  },
+  "grunur": {
+    "1": "grunur",
+    "2": "古茹努尔"
+  },
+  "habitability": {
+    "1": "habitability",
+    "2": "宜居性"
+  },
+  "harbinger": {
+    "1": "harbinger",
+    "2": "孵后"
+  },
+  "hazardous weather": {
+    "1": "hazardous weather",
+    "2": "变幻莫测的天气"
+  },
+  "hive world": {
+    "1": "hive world",
+    "2": "蜂巢星球"
+  },
+  "holy guardians": {
+    "1": "holy guardians",
+    "2": "圣地守护者"
+  },
+  "horizon needle": {
+    "1": "horizon needle",
+    "2": "视界刺针"
+  },
+  "hostile fauna": {
+    "1": "hostile fauna",
+    "2": "闹事的动物"
+  },
+  "hydroponic farms": {
+    "1": "hydroponic farms",
+    "2": "水培农场"
+  },
+  "hyper drive": {
+    "1": "hyper drive",
+    "2": "超空间引擎"
+  },
+  "hyperlane": {
+    "1": "hyperlane",
+    "2": "超空间航道"
+  },
+  "identity repository": {
+    "1": "identity repository",
+    "2": "人格仓库"
+  },
+  "industrialist": {
+    "1": "industrialist",
+    "2": "产业专员"
+  },
+  "influence": {
+    "1": "influence",
+    "2": "影响力"
+  },
+  "insight": {
+    "1": "insight",
+    "2": "洞见"
+  },
+  "irradiated": {
+    "1": "irradiated",
+    "2": "辐照天地"
+  },
+  "juggernaut": {
+    "1": "juggernaut",
+    "2": "主宰"
+  },
+  "kilostructures": {
+    "1": "kilostructures",
+    "2": "次等巨构建筑"
+  },
+  "lance": {
+    "1": "lance",
+    "2": "光矛"
+  },
+  "leviathan": {
+    "1": "leviathan",
+    "2": "利维坦"
+  },
+  "listening post": {
+    "1": "listening post",
+    "2": "监听哨站"
+  },
+  "living metal": {
+    "1": "living metal",
+    "2": "活体金属"
+  },
+  "low gravity": {
+    "1": "low gravity",
+    "2": "低重力"
+  },
+  "loyalty": {
+    "1": "loyalty",
+    "2": "忠诚度"
+  },
+  "lush": {
+    "1": "lush",
+    "2": "郁郁葱葱"
+  },
+  "lythuric gas": {
+    "1": "lythuric gas",
+    "2": "莱素气体"
+  },
+  "machine world": {
+    "1": "machine world",
+    "2": "机械星球"
+  },
+  "maintenance drones": {
+    "1": "maintenance drones",
+    "2": "维护子个体"
+  },
+  "mandible": {
+    "1": "mandible",
+    "2": "咬颚"
+  },
+  "materialist": {
+    "1": "materialist",
+    "2": "唯物主义"
+  },
+  "matter decompressor": {
+    "1": "matter decompressor",
+    "2": "物质解压器"
+  },
+  "mechanical world": {
+    "1": "mechanical world",
+    "2": "机界星球"
+  },
+  "mega art installation": {
+    "1": "mega art installation",
+    "2": "巨型艺术设施"
+  },
+  "megacorp": {
+    "1": "megacorp",
+    "2": "寰宇企业"
+  },
+  "megaengineering": {
+    "1": "megaengineering",
+    "2": "巨构建筑复原"
+  },
+  "menial drone": {
+    "1": "menial drone",
+    "2": "低级子个体"
+  },
+  "merchant guild": {
+    "1": "merchant guild",
+    "2": "商人公会"
+  },
+  "metallurgist": {
+    "1": "metallurgist",
+    "2": "冶金师"
+  },
+  "metropolis": {
+    "1": "metropolis",
+    "2": "大都会"
+  },
+  "mid": {
+    "1": "mid",
+    "2": "核心"
+  },
+  "militarist": {
+    "1": "militarist",
+    "2": "军国主义"
+  },
+  "mining station": {
+    "1": "mining station",
+    "2": "开采站"
+  },
+  "minor artifacts": {
+    "1": "minor artifacts",
+    "2": "稀有文物"
+  },
+  "modifiers": {
+    "1": "modifiers",
+    "2": "修正"
+  },
+  "morale damage": {
+    "1": "morale damage",
+    "2": "士气伤害"
+  },
+  "mountain range": {
+    "1": "mountain range",
+    "2": "高耸山脉"
+  },
+  "murmuring monolith": {
+    "1": "murmuring monolith",
+    "2": "低语金字塔"
+  },
+  "natural beauty": {
+    "1": "natural beauty",
+    "2": "自然景观"
+  },
+  "naval capacity": {
+    "1": "naval capacity",
+    "2": "海军容量"
+  },
+  "nemma": {
+    "1": "nemma",
+    "2": "尼玛"
+  },
+  "official": {
+    "1": "official",
+    "2": "行政官"
+  },
+  "opinion": {
+    "1": "opinion",
+    "2": "评价"
+  },
+  "orbital ring": {
+    "1": "orbital ring",
+    "2": "星环基地"
+  },
+  "outliner": {
+    "1": "outliner",
+    "2": "总览"
+  },
+  "overlord": {
+    "1": "overlord",
+    "2": "宗主国"
+  },
+  "pacifist": {
+    "1": "pacifist",
+    "2": "和平主义"
+  },
+  "paradise dome": {
+    "1": "paradise dome",
+    "2": "乐土园"
+  },
+  "perdition beam": {
+    "1": "perdition beam",
+    "2": "炼狱射线"
+  },
+  "planetary decision": {
+    "1": "planetary decision",
+    "2": "行星决议"
+  },
+  "planetary features": {
+    "1": "planetary features",
+    "2": "行星特征"
+  },
+  "plasteel": {
+    "1": "plasteel",
+    "2": "塑钢"
+  },
+  "poor quality minerals": {
+    "1": "poor quality minerals",
+    "2": "低品矿物"
+  },
+  "prethoryn": {
+    "1": "prethoryn",
+    "2": "普雷索林"
+  },
+  "production oversight": {
+    "1": "production oversight",
+    "2": "生产监察"
+  },
+  "propulsion": {
+    "1": "propulsion",
+    "2": "推进力学"
+  },
+  "psionic": {
+    "1": "psionic",
+    "2": "灵能"
+  },
+  "psionic theory": {
+    "1": "psionic theory",
+    "2": "灵能理论"
+  },
+  "rare crystals": {
+    "1": "rare crystals",
+    "2": "稀有水晶"
+  },
+  "reactor booster": {
+    "1": "reactor booster",
+    "2": "反应堆增压器"
+  },
+  "regulatory node": {
+    "1": "regulatory node",
+    "2": "管控节点"
+  },
+  "representative": {
+    "1": "representative",
+    "2": "代表"
+  },
+  "research agreement": {
+    "1": "research agreement",
+    "2": "科研协议"
+  },
+  "research station": {
+    "1": "research station",
+    "2": "研究站"
+  },
+  "resort world": {
+    "1": "resort world",
+    "2": "度假星球"
+  },
+  "ring section": {
+    "1": "ring section",
+    "2": "环区段"
+  },
+  "robot workers": {
+    "1": "robot workers",
+    "2": "机器人劳工"
+  },
+  "rogue ai": {
+    "1": "rogue ai",
+    "2": "失控人工智能"
+  },
+  "sapient": {
+    "1": "sapient",
+    "2": "知性；智慧"
+  },
+  "saviors": {
+    "1": "saviors",
+    "2": "福音派"
+  },
+  "scholar": {
+    "1": "scholar",
+    "2": "前沿学者"
+  },
+  "science drone": {
+    "1": "science drone",
+    "2": "科研子个体"
+  },
+  "science nexu": {
+    "1": "science nexu",
+    "2": "科学枢纽"
+  },
+  "science officer": {
+    "1": "science officer",
+    "2": "科学专员"
+  },
+  "science ship": {
+    "1": "science ship",
+    "2": "科研船"
+  },
+  "scientist": {
+    "1": "scientist",
+    "2": "科学家"
+  },
+  "sentry array": {
+    "1": "sentry array",
+    "2": "哨兵阵列"
+  },
+  "shattered world": {
+    "1": "shattered world",
+    "2": "粉碎星球"
+  },
+  "she of the void": {
+    "1": "she of the void",
+    "2": "虚空之母"
+  },
+  "shroud": {
+    "1": "shroud",
+    "2": "虚境"
+  },
+  "slave huts": {
+    "1": "slave huts",
+    "2": "奴隶棚屋"
+  },
+  "spaceport": {
+    "1": "spaceport",
+    "2": "太空港"
+  },
+  "spectral wraith": {
+    "1": "spectral wraith",
+    "2": "幽魂"
+  },
+  "spiritual": {
+    "1": "spiritual",
+    "2": "灵性"
+  },
+  "spiritual energy": {
+    "1": "spiritual energy",
+    "2": "灵性能量"
+  },
+  "spiritualist": {
+    "1": "spiritualist",
+    "2": "唯心主义"
+  },
+  "starbase": {
+    "1": "starbase",
+    "2": "恒星基地"
+  },
+  "statistician": {
+    "1": "statistician",
+    "2": "统计学家；统计工蜂；统计单元"
+  },
+  "stellar devourer": {
+    "1": "stellar devourer",
+    "2": "噬星者"
+  },
+  "stellarite devourer": {
+    "1": "stellarite devourer",
+    "2": "噬星虫"
+  },
+  "stern": {
+    "1": "stern",
+    "2": "舰艉"
+  },
+  "stinger": {
+    "1": "stinger",
+    "2": "刺蜂"
+  },
+  "strategist": {
+    "1": "strategist",
+    "2": "战略家"
+  },
+  "strike craft": {
+    "1": "strike craft",
+    "2": "舰载机"
+  },
+  "strong magnetic field": {
+    "1": "strong magnetic field",
+    "2": "强力磁场"
+  },
+  "stronghold": {
+    "1": "stronghold",
+    "2": "据点，复合要塞，要塞（原版）"
+  },
+  "subject": {
+    "1": "subject",
+    "2": "附属国、附庸"
+  },
+  "surveyor": {
+    "1": "surveyor",
+    "2": "勘探器"
+  },
+  "synapse drone": {
+    "1": "synapse drone",
+    "2": "突触子个体"
+  },
+  "technician": {
+    "1": "technician",
+    "2": "技工"
+  },
+  "telepath": {
+    "1": "telepath",
+    "2": "灵能使"
+  },
+  "terraform": {
+    "1": "terraform",
+    "2": "环境改造"
+  },
+  "the beholder": {
+    "1": "the beholder",
+    "2": "凝望者"
+  },
+  "tidal locked": {
+    "1": "tidal locked",
+    "2": "潮汐锁定"
+  },
+  "titan": {
+    "1": "titan",
+    "2": "泰坦"
+  },
+  "titanic life": {
+    "1": "titanic life",
+    "2": "泰坦巨兽"
+  },
+  "tiyanki": {
+    "1": "tiyanki",
+    "2": "缇扬奇"
+  },
+  "trade": {
+    "1": "trade",
+    "2": "贸易"
+  },
+  "trade action": {
+    "1": "trade action",
+    "2": "贸易行为"
+  },
+  "trait": {
+    "1": "trait",
+    "2": "特质"
+  },
+  "transport ship": {
+    "1": "transport ship",
+    "2": "运输船"
+  },
+  "unstable tectonics": {
+    "1": "unstable tectonics",
+    "2": "不稳定的构造"
+  },
+  "vivarium": {
+    "1": "vivarium",
+    "2": "生态园"
+  },
+  "voidcraft": {
+    "1": "voidcraft",
+    "2": "宇航技术"
+  },
+  "volatile mote": {
+    "1": "volatile mote",
+    "2": "易爆微粒"
+  },
+  "war in heaven": {
+    "1": "war in heaven",
+    "2": "天堂之战"
+  },
+  "warform": {
+    "1": "warform",
+    "2": "战体"
+  },
+  "wasteland radiation": {
+    "1": "wasteland radiation",
+    "2": "废土辐射"
+  },
+  "weak magnetic field": {
+    "1": "weak magnetic field",
+    "2": "弱磁场"
+  },
+  "wild storms": {
+    "1": "wild storms",
+    "2": "狂野之风"
+  },
+  "workforce": {
+    "1": "workforce",
+    "2": "劳动力"
+  },
+  "world": {
+    "1": "world",
+    "2": "星球"
+  },
+  "wormhole station": {
+    "1": "wormhole station",
+    "2": "虫洞站"
+  },
+  "xenophile": {
+    "1": "xenophile",
+    "2": "亲外主义"
+  },
+  "xenophobe": {
+    "1": "xenophobe",
+    "2": "排外主义"
+  },
+  "yurantic crystal": {
+    "1": "yurantic crystal",
+    "2": "育兰水晶"
+  },
+  "zarqlan": {
+    "1": "zarqlan",
+    "2": "扎克兰"
+  },
+  "zone": {
+    "1": "zone",
+    "2": "区划特化"
+  },
+  "zro": {
+    "1": "zro",
+    "2": "泽珞"
+  }
 }
