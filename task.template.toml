@@ -8,8 +8,8 @@ api_base = "https://api.deepseek.com"
 model = "deepseek-reasoner"
 # 温度参数（0.0-2.0，默认：0.7）
 temperature = 0.7
-# 请求超时时间（秒，默认：30）
-timeout_secs = 30
+# 请求超时时间（秒，默认：600）
+timeout_secs = 600
 # 最大重试次数（默认：3）
 max_retries = 3
 # 最大输出token数（默认：2000）
