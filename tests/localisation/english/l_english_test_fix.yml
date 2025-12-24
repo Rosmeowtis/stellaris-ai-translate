@@ -1,0 +1,7 @@
+# 测试源文件格式错乱的情况
+l_english:
+  # Technology
+  tech_pf_micro_terraforming:0 "Micro-Terraforming Techniques"
+  tech_pf_micro_terraforming_desc: "Small, localized terraforming projects enable engineers to make specific alterations to the environment, allowing us to create specialised ecosystems on our worlds
+  pf_terraforming_decisions: "§HUnlock Feature:§! Specialized Terraforming Decisions"
+  pf_terraforming_decisions_desc: "§H$tech_pf_micro_terraforming$§!\nUnlocks decisions to specialize a planet's environment."
