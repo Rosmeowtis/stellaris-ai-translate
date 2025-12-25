@@ -8,6 +8,7 @@
 
 + Paradox 本地化文件规范： @./docs/about_localisation.md
 + 术语表文件规范： @./docs/about_glossary.md
++ 数据目录规范： @./docs/about_datadir.md
 
 ## 其他信息
 
