@@ -80,32 +80,43 @@ async fn main() -> Result<()> {
 
             // 加载配置
             log::info!("Loading task configuration...");
-            let (client_settings, task) = TranslationTask::from_file(&task_file)?;
-            log::info!("Configuration loaded successfully");
-            log::debug!("Source language: {}", task.source_lang);
-            log::debug!("Target languages: {:?}", task.target_langs);
-            log::debug!("Glossaries: {:?}", task.glossaries);
+            let (client_settings, tasks) = TranslationTask::from_file(&task_file)?;
+            log::info!(
+                "Configuration loaded successfully, found {} task(s)",
+                tasks.len()
+            );
 
-            // 执行翻译任务
-            translate_task(task, client_settings).await?;
+            for (i, task) in tasks.iter().enumerate() {
+                log::info!("Processing task {}/{}", i + 1, tasks.len());
+                log::debug!("Source language: {}", task.source_lang);
+                log::debug!("Target languages: {:?}", task.target_langs);
+                log::debug!("Glossaries: {:?}", task.glossaries);
 
-            log::info!("Translation task completed!");
+                // 执行翻译任务
+                translate_task(task.clone(), client_settings.clone()).await?;
+            }
+
+            log::info!("All translation tasks completed!");
             Ok(())
         }
         Commands::Validate { task_file } => {
             log::info!("Validating configuration file: {:?}", task_file);
 
-            let (client_settings, task) = TranslationTask::from_file(&task_file)?;
+            let (client_settings, tasks) = TranslationTask::from_file(&task_file)?;
 
-            log::info!("Configuration is valid!");
-            log::info!("- Source language: {}", task.source_lang);
-            log::info!("- Target languages: {}", task.target_langs.join(", "));
-            log::info!("- Glossaries: {}", task.glossaries.join(", "));
-            log::info!("- Localisation directory: {:?}", task.localisation_dir);
-            log::info!("- Client settings:");
+            log::info!("Configuration is valid! Found {} task(s)", tasks.len());
+            log::info!("Client settings:");
             log::info!("  * API base: {}", client_settings.api_base);
             log::info!("  * Model: {}", client_settings.model);
             log::info!("  * Temperature: {}", client_settings.temperature);
+
+            for (i, task) in tasks.iter().enumerate() {
+                log::info!("Task {}:", i + 1);
+                log::info!("  - Source language: {}", task.source_lang);
+                log::info!("  - Target languages: {}", task.target_langs.join(", "));
+                log::info!("  - Glossaries: {}", task.glossaries.join(", "));
+                log::info!("  - Localisation directory: {:?}", task.localisation_dir);
+            }
 
             Ok(())
         }

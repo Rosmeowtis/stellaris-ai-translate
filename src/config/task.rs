@@ -51,22 +51,19 @@ impl TaskFileConfig {
 }
 
 impl TranslationTask {
-    /// 从TOML文件加载翻译任务（返回第一个任务和客户端设置）
+    /// 从TOML文件加载翻译任务（返回所有任务和客户端设置）
     pub fn from_file<P: AsRef<Path>>(
         path: P,
-    ) -> Result<(ClientSettings, Self), crate::error::ConfigError> {
+    ) -> Result<(ClientSettings, Vec<Self>), crate::error::ConfigError> {
         let config = TaskFileConfig::from_file(path)?;
 
-        // 目前只取第一个任务
-        // TODO: 支持单个文件中的多个任务
-        config
-            .task
-            .into_iter()
-            .next()
-            .map(|task| (config.client_settings, task))
-            .ok_or_else(|| {
-                crate::error::ConfigError::MissingField("配置文件中未找到任务".to_string())
-            })
+        if config.task.is_empty() {
+            return Err(crate::error::ConfigError::MissingField(
+                "配置文件中未找到任务".to_string(),
+            ));
+        }
+
+        Ok((config.client_settings, config.task))
     }
 
     /// 验证配置
