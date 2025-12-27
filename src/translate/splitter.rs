@@ -6,6 +6,7 @@ use crate::error::Result;
 use crate::utils::estimate_mixed_tokens;
 
 /// 文件切片
+#[derive(Clone)]
 pub struct FileChunk {
     /// 切片内容
     pub content: String,
@@ -21,7 +22,7 @@ pub struct FileChunk {
 pub fn split_yaml_content(
     target_filename: &str,
     content: &str,
-    max_chunk_size: usize,
+    max_chunk_tokens: usize,
 ) -> Result<Vec<FileChunk>> {
     let lines: Vec<&str> = content.lines().collect();
     if lines.is_empty() {
@@ -39,7 +40,7 @@ pub fn split_yaml_content(
 
         // 如果当前行会使token数超过限制，且当前切片不为空，则结束当前切片
         if !current_chunk_lines.is_empty()
-            && current_token_count + line_token_count > max_chunk_size
+            && current_token_count + line_token_count > max_chunk_tokens
         {
             let end_line = line_number - 1;
             chunks.push(FileChunk {

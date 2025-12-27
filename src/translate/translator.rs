@@ -4,11 +4,12 @@
 
 use crate::config::ClientSettings;
 use crate::error::{Result, TranslationError};
+use crate::postprocess::TranslationSlice;
 use crate::translate::FileChunk;
 use crate::translate::api::{ApiClient, system_message, user_message};
 use crate::translate::glossary::Glossary;
 use crate::translate::validator::FormatValidator;
-use crate::utils::find_data_file_or_error;
+use crate::utils::{estimate_mixed_tokens, find_data_file_or_error};
 use std::fs;
 
 /// 翻译器
@@ -115,7 +116,7 @@ impl Translator {
         chunk: &FileChunk,
         source_lang: &str,
         target_lang: &str,
-    ) -> Result<String> {
+    ) -> Result<TranslationSlice> {
         // 加载系统提示词
         let source_text = &chunk.content;
         let system_prompt = self.load_system_prompt(source_lang, target_lang, source_text)?;
@@ -126,9 +127,26 @@ impl Translator {
             user_message(source_text.to_string()),
         ];
 
+        let id = format!(
+            "{}({}->{})",
+            chunk.target_filename, chunk.start_line, chunk.end_line
+        );
+        log::info!(
+            "Sending translation request [{}] with {} characters, estimated {} tokens...",
+            id,
+            source_text.chars().count(),
+            estimate_mixed_tokens(&source_text)
+        );
         // 调用API
         let response = self.api_client.chat_completions(messages).await?;
 
+        log::info!(
+            "Received translation response [{}], tokens used: {} + {} = {}",
+            id,
+            response.usage.prompt_tokens,
+            response.usage.completion_tokens,
+            response.usage.total_tokens
+        );
         // 提取回复内容
         let translated_text = response
             .choices
@@ -149,23 +167,53 @@ impl Translator {
             log::warn!("Found issue in {}: {}", &chunk.target_filename, problem);
         }
 
-        Ok(translated_text)
+        let slice = TranslationSlice {
+            content: translated_text.to_owned(),
+            start_line: chunk.start_line,
+            end_line: chunk.end_line,
+        };
+        Ok(slice)
     }
 
     /// 批量翻译文本片段
+    /// 每个片段独立翻译，适用于并发请求
+    /// 返回按顺序排列的翻译结果
+    /// 注意：此方法不会检查 chunks 的尺寸，请确保传入的 chunks 已经合理切分
     pub async fn translate_batch(
         &self,
         chunks: Vec<FileChunk>,
         source_lang: &str,
         target_lang: &str,
-    ) -> Result<Vec<String>> {
-        let mut results = Vec::new();
+    ) -> Result<Vec<TranslationSlice>> {
+        let mut results: Vec<TranslationSlice> = Vec::new();
+        let mut handles = Vec::new();
         for chunk in chunks {
-            let translated = self
-                .translate_chunk(&chunk, source_lang, target_lang)
-                .await?;
-            results.push(translated);
+            let chunk = chunk.to_owned();
+            let handle = async move {
+                self.translate_chunk(&chunk, &source_lang, &target_lang)
+                    .await
+            };
+            handles.push(handle);
         }
+        let translated = futures::future::join_all(handles).await;
+
+        // 处理本批次的结果
+        let mut has_error = false;
+        let mut errors = String::new();
+        for res in translated {
+            match res {
+                Ok(text) => results.push(text),
+                Err(e) => {
+                    errors.push_str(&format!("{} ", e));
+                    has_error = true;
+                }
+            }
+        }
+
+        if has_error {
+            return Err(TranslationError::AsyncError(errors.trim().to_string()));
+        }
+
         Ok(results)
     }
 }

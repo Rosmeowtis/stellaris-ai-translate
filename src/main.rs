@@ -29,17 +29,9 @@ enum Commands {
         #[arg(value_name = "TASK_FILE")]
         task_file: PathBuf,
 
-        /// 启用详细输出
-        #[arg(short, long)]
-        verbose: bool,
-
-        /// 跳过预处理（直接使用已修复的文件）
-        #[arg(long)]
-        skip_preprocess: bool,
-
-        /// 跳过验证（不检查格式标记）
-        #[arg(long)]
-        skip_validation: bool,
+        /// 是否适用并发方法
+        #[arg(long, default_value_t = false)]
+        concurrent: bool,
     },
     /// 在已经完成翻译的情况下，跳过翻译任务，只检查翻译结果是否符合要求
     Validate {
@@ -74,14 +66,8 @@ async fn main() -> Result<()> {
     match cli.command {
         Commands::Translate {
             task_file,
-            verbose,
-            skip_preprocess: _skip_preprocess,
-            skip_validation: _skip_validation,
+            concurrent,
         } => {
-            if verbose {
-                log::info!("Starting translation task from: {:?}", task_file);
-            }
-
             // 检查API密钥
             if !paradox_mod_translator::config::has_api_key() {
                 log::error!("OPENAI_API_KEY environment variable is not set");
@@ -94,6 +80,8 @@ async fn main() -> Result<()> {
             // 加载配置
             log::info!("Loading task configuration...");
             let (client_settings, tasks) = TranslationTask::from_file(&task_file)?;
+            log::info!("Use API: {}", &client_settings.api_base);
+            log::info!("Use Model: {}", &client_settings.model);
             log::info!(
                 "Configuration loaded successfully, found {} task(s)",
                 tasks.len()
@@ -106,7 +94,7 @@ async fn main() -> Result<()> {
                 log::debug!("Glossaries: {:?}", task.glossaries);
 
                 // 执行翻译任务
-                translate_task(task.clone(), client_settings.clone()).await?;
+                translate_task(task.clone(), client_settings.clone(), concurrent).await?;
             }
 
             log::info!("All translation tasks completed!");

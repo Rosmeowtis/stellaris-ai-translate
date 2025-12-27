@@ -31,6 +31,9 @@ pub enum TranslationError {
 
     #[error("Missing environment variable: {0}")]
     MissingEnvVar(String),
+
+    #[error("Async task error: {0}")]
+    AsyncError(String),
 }
 
 #[derive(Error, Debug)]
@@ -43,6 +46,12 @@ pub enum ConfigError {
 
     #[error("Invalid path: {0}")]
     InvalidPath(String),
+
+    #[error("Invalid value: {0}")]
+    InvalidValue(String),
+
+    #[error("Multiple config errors: {0:?}")]
+    MultipleErrors(Vec<ConfigError>),
 }
 
 #[derive(Error, Debug)]

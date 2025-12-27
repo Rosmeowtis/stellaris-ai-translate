@@ -27,13 +27,18 @@ pub struct ClientSettings {
     #[serde(default = "default_max_tokens")]
     pub max_tokens: Option<u32>,
 
-    /// 每次请求的最大文本长度（字符数，用于切片）
-    #[serde(default = "default_max_chunk_size")]
-    pub max_chunk_size: usize,
+    /// 文本切片的最大 token 数（用 estimate_mixed_tokens 估算）
+    /// 推荐值为模型最大上下文长度的 1/3 以免超出
+    #[serde(default = "default_max_chunk_tokens")]
+    pub max_chunk_tokens: usize,
 
     /// 是否启用流式响应
     #[serde(default)]
     pub stream: bool,
+
+    /// 并发请求数(默认2)
+    #[serde(default = "default_concurrency")]
+    pub concurrency: usize,
 }
 
 impl Default for ClientSettings {
@@ -45,8 +50,9 @@ impl Default for ClientSettings {
             timeout_secs: default_timeout(),
             max_retries: default_max_retries(),
             max_tokens: default_max_tokens(),
-            max_chunk_size: default_max_chunk_size(),
+            max_chunk_tokens: default_max_chunk_tokens(),
             stream: false,
+            concurrency: default_concurrency(),
         }
     }
 }
@@ -76,32 +82,48 @@ fn default_max_tokens() -> Option<u32> {
     None
 }
 
-fn default_max_chunk_size() -> usize {
+fn default_max_chunk_tokens() -> usize {
     4000 // 大约1000个token的保守估计
+}
+
+fn default_concurrency() -> usize {
+    2
 }
 
 impl ClientSettings {
     /// 验证设置是否有效
     pub fn validate(&self) -> Result<(), crate::error::ConfigError> {
+        let mut errors: Vec<crate::error::ConfigError> = Vec::new();
+
         if self.temperature < 0.0 || self.temperature > 2.0 {
-            return Err(crate::error::ConfigError::MissingField(
+            errors.push(crate::error::ConfigError::InvalidValue(
                 "temperature must be between 0.0 and 2.0".to_string(),
             ));
         }
 
         if self.timeout_secs == 0 {
-            return Err(crate::error::ConfigError::MissingField(
+            errors.push(crate::error::ConfigError::InvalidValue(
                 "timeout_secs must be greater than 0".to_string(),
             ));
         }
 
-        if self.max_chunk_size < 100 {
-            return Err(crate::error::ConfigError::MissingField(
-                "max_chunk_size must be at least 100 characters".to_string(),
+        if self.max_chunk_tokens < 100 {
+            errors.push(crate::error::ConfigError::InvalidValue(
+                "max_chunk_tokens must be at least 100 characters".to_string(),
             ));
         }
 
-        Ok(())
+        if self.concurrency < 1 {
+            errors.push(crate::error::ConfigError::InvalidValue(
+                "concurrency must be at least 1".to_string(),
+            ));
+        }
+
+        if errors.is_empty() {
+            Ok(())
+        } else {
+            Err(crate::error::ConfigError::MultipleErrors(errors))
+        }
     }
 
     /// 获取完整的API端点URL

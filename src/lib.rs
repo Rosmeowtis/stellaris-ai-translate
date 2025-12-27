@@ -13,13 +13,14 @@ pub use error::{Result, TranslationError};
 
 use crate::{
     preprocess::{fix_yaml_content, trim_lang_header},
-    translate::FormatValidator,
+    translate::{FileChunk, FormatValidator},
 };
 
 /// 执行翻译任务
 pub async fn translate_task(
     task: config::TranslationTask,
     client_settings: config::ClientSettings,
+    concurrent: bool,
 ) -> Result<()> {
     use crate::translate::{Translator, load_glossaries_from_task};
     use std::fs;
@@ -33,7 +34,8 @@ pub async fn translate_task(
     let merged_glossary = load_glossaries_from_task(&task)?;
 
     // 2. 创建翻译器
-    let max_chunk_size = client_settings.max_chunk_size;
+    let max_chunk_tokens = client_settings.max_chunk_tokens;
+    let concurrency = client_settings.concurrency;
     let translator = Translator::from_settings(client_settings, merged_glossary)?;
 
     // 3. 遍历源目录中的文件
@@ -74,15 +76,28 @@ pub async fn translate_task(
 
         for source_file in &source_files {
             log::info!("Processing file: {:?}", source_file);
-            translate_one_file(
-                &translator,
-                &task.source_lang,
-                target_lang,
-                max_chunk_size,
-                &target_dir,
-                source_file,
-            )
-            .await?;
+            if concurrent {
+                translate_one_file_batch(
+                    &translator,
+                    &task.source_lang,
+                    target_lang,
+                    max_chunk_tokens,
+                    concurrency,
+                    &target_dir,
+                    source_file,
+                )
+                .await?;
+            } else {
+                translate_one_file(
+                    &translator,
+                    &task.source_lang,
+                    target_lang,
+                    max_chunk_tokens,
+                    &target_dir,
+                    source_file,
+                )
+                .await?;
+            }
             count += 1;
             log::info!("Progress: {}/{} files translated", count, total);
         }
@@ -96,11 +111,11 @@ pub async fn translate_one_file(
     translator: &translate::Translator,
     source_lang: &str,
     target_lang: &str,
-    max_chunk_size: usize,
+    max_chunk_tokens: usize,
     target_dir: &std::path::PathBuf,
     source_file: &std::path::PathBuf,
 ) -> Result<()> {
-    use crate::postprocess::{TranslationSlice, reconstruct_yaml_file, write_translated_file};
+    use crate::postprocess::{reconstruct_yaml_file, write_translated_file};
     use crate::preprocess::{fix_yaml_content, generate_target_filename, trim_lang_header};
     use crate::translate::split_yaml_content;
     use std::fs;
@@ -127,7 +142,7 @@ pub async fn translate_one_file(
     // 修复YAML文件中的格式问题
     let content = fix_yaml_content(&content)?;
     // 切片
-    let chunks = split_yaml_content(&target_filename, &content, max_chunk_size)?;
+    let chunks = split_yaml_content(&target_filename, &content, max_chunk_tokens)?;
     log::info!("File split into {} chunks", chunks.len());
 
     // 翻译每个切片
@@ -138,23 +153,80 @@ pub async fn translate_one_file(
             &chunk.content
         );
 
-        let translated_content = translator
+        let slice = translator
             .translate_chunk(&chunk, &source_lang, target_lang)
             .await?;
 
         log::trace!(
             "\n======TRACE Translated======\n{}\n======TRACE END======\n",
-            &translated_content
+            &slice.content
         );
 
-        translated_chunks.push(TranslationSlice {
-            content: translated_content,
-            start_line: chunk.start_line,
-            end_line: chunk.end_line,
-        });
+        translated_chunks.push(slice);
         log::info!("Translated chunk {}/{}", i + 1, chunks.len());
     }
     let reconstructed = reconstruct_yaml_file(translated_chunks, &target_lang)?;
+
+    write_translated_file(&reconstructed, &output_path, true)?;
+    log::info!("Successfully translated: {:?}", output_path);
+    Ok(())
+}
+
+pub async fn translate_one_file_batch(
+    translator: &translate::Translator,
+    source_lang: &str,
+    target_lang: &str,
+    max_chunk_tokens: usize,
+    batch_size: usize,
+    target_dir: &std::path::PathBuf,
+    source_file: &std::path::PathBuf,
+) -> Result<()> {
+    use crate::postprocess::{reconstruct_yaml_file, write_translated_file};
+    use crate::preprocess::{fix_yaml_content, generate_target_filename, trim_lang_header};
+    use crate::translate::split_yaml_content;
+    use std::fs;
+
+    // 算出输出文件路径
+    let filename = source_file
+        .file_name()
+        .and_then(|n| n.to_str())
+        .ok_or_else(|| TranslationError::FileNotFound("Invalid filename".to_string()))?;
+    let target_filename = generate_target_filename(filename, &source_lang, target_lang);
+    let output_path = target_dir.join(&target_filename);
+
+    // 读取源文件内容
+    let content = fs::read_to_string(source_file)?;
+    // 去除 BOM 头
+    let content = if content.starts_with("\u{FEFF}") {
+        content.trim_start_matches("\u{FEFF}")
+    } else {
+        &content
+    }
+    .to_string();
+    // 去除语言头标记
+    let (_original_header, content) = trim_lang_header(&source_lang, &content);
+    // 修复YAML文件中的格式问题
+    let content = fix_yaml_content(&content)?;
+    // 切片
+    let chunks = split_yaml_content(&target_filename, &content, max_chunk_tokens)?;
+    log::info!("File split into {} chunks", chunks.len());
+
+    // 翻译每个切片
+    let mut translated_slices = Vec::new();
+    let total = chunks.len();
+    let batches = chunks.chunks(batch_size);
+    let mut translated_count = 0;
+    for batch in batches {
+        let chunks: Vec<FileChunk> = batch.into_iter().map(|x| x.to_owned()).collect();
+        let will_translate = chunks.len();
+        let slices = translator
+            .translate_batch(chunks, &source_lang, target_lang)
+            .await?;
+        translated_count += will_translate;
+        log::info!("Translated chunk {}/{}", translated_count, total);
+        translated_slices.extend(slices);
+    }
+    let reconstructed = reconstruct_yaml_file(translated_slices, &target_lang)?;
 
     write_translated_file(&reconstructed, &output_path, true)?;
     log::info!("Successfully translated: {:?}", output_path);
