@@ -35,4 +35,4 @@ glossaries = [
 # 源语言文件所在目录，会自动读取 {localisation_dir}/{source_lang} 下的所有 yml 文件，并将其写入
 # localisation_dir/{source_lang}/replace 中的同名 yml 文件中（将文件名中的 l_{source_lang} 替换为 l_{target_lang}）
 # 需要为绝对路径或相对于 task.toml 的相对路径
-localisation_dir = "./tests/localisation"
+localisation_dir = "./localisation"

@@ -5,7 +5,8 @@ edition = "2024"
 authors = ["Rosmeowtis <rosmeowtis@outlook.com>"]
 description = "AI-powered translator for Paradox game mods"
 license = "MIT"
-repository = ""
+repository = "https://github.com/Rosmeowtis/paradox-mod-translator"
+build = "build.rs"
 
 [dependencies]
 anyhow = "1.0"
@@ -27,6 +28,10 @@ walkdir = "2.5"
 [dev-dependencies]
 assert_fs = "1.*"
 tempfile = "3.*"
+
+[build-dependencies]
+walkdir = "2.5"
+zip = "7.0.0"
 
 [[bin]]
 name = "pmt"
