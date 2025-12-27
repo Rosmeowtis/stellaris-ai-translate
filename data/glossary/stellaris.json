@@ -13,7 +13,7 @@
   },
   "ambassador": {
     "1": "ambassador",
-    "2": "大使；外交使节"
+    "2": "外交使节"
   },
   "amenities": {
     "1": "amenities",
@@ -21,7 +21,7 @@
   },
   "analyst": {
     "1": "analyst",
-    "2": "分析专员；分析工蜂；分析单元"
+    "2": "分析专员"
   },
   "ancient automation": {
     "1": "ancient automation",
@@ -409,7 +409,7 @@
   },
   "general": {
     "1": "general",
-    "2": "陆军将领；陆军司令"
+    "2": "陆军司令"
   },
   "gestalt consciousness": {
     "1": "gestalt consciousness",
@@ -421,7 +421,7 @@
   },
   "grand archives": {
     "1": "grand archives",
-    "2": "博物天枢；大档案库"
+    "2": "博物天枢"
   },
   "grunur": {
     "1": "grunur",
@@ -733,7 +733,7 @@
   },
   "sapient": {
     "1": "sapient",
-    "2": "知性；智慧"
+    "2": "知性"
   },
   "saviors": {
     "1": "saviors",
@@ -809,7 +809,7 @@
   },
   "statistician": {
     "1": "statistician",
-    "2": "统计学家；统计工蜂；统计单元"
+    "2": "统计学家"
   },
   "stellar devourer": {
     "1": "stellar devourer",
