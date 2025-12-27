@@ -60,6 +60,8 @@ pub async fn translate_task(
 
     log::info!("Found {} source files", source_files.len());
 
+    let total = task.target_langs.len() * source_files.len();
+    let mut count = 0;
     // 4. 对每个目标语言进行翻译
     for target_lang in &task.target_langs {
         log::info!("Translating to: {}", target_lang);
@@ -81,6 +83,8 @@ pub async fn translate_task(
                 source_file,
             )
             .await?;
+            count += 1;
+            log::info!("Progress: {}/{} files translated", count, total);
         }
     }
 
@@ -128,7 +132,7 @@ pub async fn translate_one_file(
 
     // 翻译每个切片
     let mut translated_chunks = Vec::new();
-    for chunk in chunks {
+    for (i, chunk) in chunks.iter().enumerate() {
         log::trace!(
             "\n======TRACE Translating chunk======\n{}\n======TRACE END======\n",
             &chunk.content
@@ -148,6 +152,7 @@ pub async fn translate_one_file(
             start_line: chunk.start_line,
             end_line: chunk.end_line,
         });
+        log::info!("Translated chunk {}/{}", i + 1, chunks.len());
     }
     let reconstructed = reconstruct_yaml_file(translated_chunks, &target_lang)?;
 
