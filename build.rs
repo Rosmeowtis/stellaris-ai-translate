@@ -3,6 +3,7 @@ use walkdir::WalkDir;
 fn main() {
     std::fs::create_dir_all("build").unwrap();
     std::fs::create_dir_all("build/localisation").unwrap();
+    std::fs::create_dir_all("dist").unwrap();
 
     // 如果可执行文件还没有编译，先编译它
     let exe = copy_executable();
