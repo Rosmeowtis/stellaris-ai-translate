@@ -16,12 +16,8 @@ pub async fn translate_task(
     task: config::TranslationTask,
     client_settings: config::ClientSettings,
 ) -> Result<()> {
-    use crate::utils::find_data_file;
-    use postprocess::{TranslationSlice, reconstruct_yaml_file, write_translated_file};
-    use preprocess::{fix_yaml_content, generate_target_filename, trim_lang_header};
+    use crate::translate::{Translator, load_glossaries_from_task};
     use std::fs;
-    use std::path::PathBuf;
-    use translate::{Glossary, Translator, split_yaml_content};
     use walkdir::WalkDir;
 
     log::info!("Starting translation task");
@@ -29,48 +25,7 @@ pub async fn translate_task(
     log::info!("Target languages: {:?}", task.target_langs);
 
     // 1. 加载术语表
-    let mut glossaries = Vec::new();
-    for glossary_name in &task.glossaries {
-        // 首先尝试用户自定义术语表
-        // 数据目录应按照以下顺序寻找，若不存在再寻找下一个：
-        // 1. 当前目录下的数据： ./data/
-        // 2. 用户级数据目录： ~/.local/share/pmt/data/ (Unix) 或 %APPDATA%\pmt\data\ (Windows)
-
-        // 先尝试 glossary_custom 目录
-        let custom_path = format!("glossary_custom/{}.json", glossary_name);
-        let path = if let Some(custom_file) = find_data_file(&custom_path)? {
-            custom_file
-        } else {
-            // 如果自定义术语表不存在，尝试默认术语表
-            let default_path = format!("glossary/{}.json", glossary_name);
-            find_data_file(&default_path)?.ok_or_else(|| {
-                let user_data_dir = crate::utils::get_user_data_dir()
-                    .unwrap_or_else(|_| PathBuf::from("[无法获取用户数据目录]"));
-                crate::error::TranslationError::FileNotFound(format!(
-                    "Glossary file not found: '{}'. Searched in:\n1. ./data/{}\n2. ./data/{}\n3. {}/{}\n4. {}/{}",
-                    glossary_name,
-                    custom_path,
-                    default_path,
-                    user_data_dir.display(),
-                    custom_path,
-                    user_data_dir.display(),
-                    default_path
-                ))
-            })?
-        };
-
-        log::debug!("Loading glossary: {}", path.display());
-        let glossary = Glossary::from_json_file(&path)?;
-        let glossary_len = glossary.len();
-        glossaries.push(glossary);
-        log::info!(
-            "Loaded glossary '{}' with {} entries",
-            glossary_name,
-            glossary_len
-        );
-    }
-    // 合并多个术语表到同一个Glossary对象中
-    let merged_glossary = Glossary::merge_glossaries(&glossaries);
+    let merged_glossary = load_glossaries_from_task(&task)?;
 
     // 2. 创建翻译器
     let translator = Translator::from_settings(client_settings, merged_glossary)?;
@@ -111,73 +66,69 @@ pub async fn translate_task(
 
         for source_file in &source_files {
             log::info!("Processing file: {:?}", source_file);
-
-            // 读取源文件，忽略BOM头
-            let content = fs::read_to_string(source_file)?;
-            let content = if content.starts_with("\u{FEFF}") {
-                content.trim_start_matches("\u{FEFF}")
-            } else {
-                &content
-            }
-            .to_string();
-
-            // 提取文件名
-            let filename = source_file
-                .file_name()
-                .and_then(|n| n.to_str())
-                .ok_or_else(|| TranslationError::FileNotFound("Invalid filename".to_string()))?;
-
-            // 生成目标文件名
-            let target_filename =
-                generate_target_filename(filename, &task.source_lang, target_lang);
-            let output_path = target_dir.join(&target_filename);
-
-            // 移除语言头（如果存在）
-            let (_original_header, content) = trim_lang_header(&task, content);
-
-            // 预处理：修复YAML
-            let content = fix_yaml_content(&content)?;
-
-            // 切片（假设最大token数为2000，实际应根据模型调整）
-            let max_chunk_size = 2000;
-            let chunks = split_yaml_content(&target_filename, &content, max_chunk_size)?;
-
-            log::info!("File split into {} chunks", chunks.len());
-
-            // 翻译每个切片
-            let mut translated_chunks = Vec::new();
-            for chunk in chunks {
-                log::debug!(
-                    "\n======DEBUG Translating chunk======\n{}\n======DEBUG END======\n",
-                    &chunk.content
-                );
-
-                let translated_content = translator
-                    .translate_chunk(&chunk, &task.source_lang, target_lang)
-                    .await?;
-
-                log::debug!(
-                    "\n======DEBUG Translated======\n{}\n======DEBUG END======\n",
-                    &translated_content
-                );
-
-                translated_chunks.push(TranslationSlice {
-                    content: translated_content,
-                    start_line: chunk.start_line,
-                    end_line: chunk.end_line,
-                });
-            }
-
-            // 后处理：合并切片并重建YAML文件
-            let reconstructed = reconstruct_yaml_file(translated_chunks, &target_lang)?;
-
-            // 写入目标文件
-            write_translated_file(&reconstructed, &output_path, true)?;
-            log::info!("Successfully translated: {:?}", output_path);
+            translate_one_file(&task, &translator, target_lang, &target_dir, source_file).await?;
         }
     }
 
     log::info!("Translation task completed successfully!");
+    Ok(())
+}
+
+pub async fn translate_one_file(
+    task: &config::TranslationTask,
+    translator: &translate::Translator,
+    target_lang: &String,
+    target_dir: &std::path::PathBuf,
+    source_file: &std::path::PathBuf,
+) -> Result<()> {
+    use crate::postprocess::{TranslationSlice, reconstruct_yaml_file, write_translated_file};
+    use crate::preprocess::{fix_yaml_content, generate_target_filename, trim_lang_header};
+    use crate::translate::split_yaml_content;
+    use std::fs;
+
+    let content = fs::read_to_string(source_file)?;
+    let content = if content.starts_with("\u{FEFF}") {
+        content.trim_start_matches("\u{FEFF}")
+    } else {
+        &content
+    }
+    .to_string();
+    let filename = source_file
+        .file_name()
+        .and_then(|n| n.to_str())
+        .ok_or_else(|| TranslationError::FileNotFound("Invalid filename".to_string()))?;
+    let target_filename = generate_target_filename(filename, &task.source_lang, target_lang);
+    let output_path = target_dir.join(&target_filename);
+    let (_original_header, content) = trim_lang_header(task, content);
+    let content = fix_yaml_content(&content)?;
+    let max_chunk_size = 2000;
+    let chunks = split_yaml_content(&target_filename, &content, max_chunk_size)?;
+    log::info!("File split into {} chunks", chunks.len());
+    let mut translated_chunks = Vec::new();
+    for chunk in chunks {
+        log::debug!(
+            "\n======DEBUG Translating chunk======\n{}\n======DEBUG END======\n",
+            &chunk.content
+        );
+
+        let translated_content = translator
+            .translate_chunk(&chunk, &task.source_lang, target_lang)
+            .await?;
+
+        log::debug!(
+            "\n======DEBUG Translated======\n{}\n======DEBUG END======\n",
+            &translated_content
+        );
+
+        translated_chunks.push(TranslationSlice {
+            content: translated_content,
+            start_line: chunk.start_line,
+            end_line: chunk.end_line,
+        });
+    }
+    let reconstructed = reconstruct_yaml_file(translated_chunks, &target_lang)?;
+    write_translated_file(&reconstructed, &output_path, true)?;
+    log::info!("Successfully translated: {:?}", output_path);
     Ok(())
 }
 

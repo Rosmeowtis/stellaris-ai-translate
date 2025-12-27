@@ -313,6 +313,52 @@ impl Glossary {
     }
 }
 
+/// 从 TranslationTask.glossaries 配置中加载所有涉及的术语表，并将其合并为一个 Glossary 对象
+pub fn load_glossaries_from_task(
+    task: &crate::config::TranslationTask,
+) -> Result<crate::translate::Glossary> {
+    use crate::translate::Glossary;
+    use crate::utils::find_data_file;
+    use std::path::PathBuf;
+    let mut glossaries = Vec::new();
+    for glossary_name in &task.glossaries {
+        // 先尝试 glossary_custom 目录
+        let custom_path = format!("glossary_custom/{}.json", glossary_name);
+        let path = if let Some(custom_file) = find_data_file(&custom_path)? {
+            custom_file
+        } else {
+            // 如果自定义术语表不存在，尝试默认术语表
+            let default_path = format!("glossary/{}.json", glossary_name);
+            find_data_file(&default_path)?.ok_or_else(|| {
+                let user_data_dir = crate::utils::get_user_data_dir()
+                    .unwrap_or_else(|_| PathBuf::from("[无法获取用户数据目录]"));
+                crate::error::TranslationError::FileNotFound(format!(
+                    "Glossary file not found: '{}'. Searched in:\n1. ./data/{}\n2. ./data/{}\n3. {}/{}\n4. {}/{}",
+                    glossary_name,
+                    custom_path,
+                    default_path,
+                    user_data_dir.display(),
+                    custom_path,
+                    user_data_dir.display(),
+                    default_path
+                ))
+            })?
+        };
+
+        log::debug!("Loading glossary: {}", path.display());
+        let glossary = Glossary::from_json_file(&path)?;
+        let glossary_len = glossary.len();
+        glossaries.push(glossary);
+        log::info!(
+            "Loaded glossary '{}' with {} entries",
+            glossary_name,
+            glossary_len
+        );
+    }
+    let merged_glossary = Glossary::merge_glossaries(&glossaries);
+    Ok(merged_glossary)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
